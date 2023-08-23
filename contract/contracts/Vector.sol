@@ -67,8 +67,15 @@ contract Vector is ERC721, ERC721Enumerable, ERC721URIStorage {
 
     function viewNFTsForSale() external view returns (uint256[] memory) {
         uint256 nftCount = _tokenIdCounter.current();
-        uint256[] memory result = new uint256[](nftCount);
         uint256 resultIndex = 0;
+
+        for (uint256 tokenId = 0; tokenId < nftCount; tokenId++) {
+            if (nfts[tokenId].price > 0) {
+                resultIndex++;
+            }
+        }
+        uint256[] memory result = new uint256[](resultIndex);
+        resultIndex = 0;
 
         for (uint256 tokenId = 0; tokenId < nftCount; tokenId++) {
             if (nfts[tokenId].price > 0) {
