@@ -1,20 +1,22 @@
-import { formatEther } from 'ethers/lib/utils';
 import React, { useEffect, useState } from 'react';
+import banner from '../images/banner.jpeg';
 import etherLogo from '../images/Ether.png';
 import { NavLink } from 'react-router-dom';
-export const ForSale = () => {
+import { formatEther } from 'ethers/lib/utils';
+
+export const Profile = () => {
   const [nft, setNft] = useState();
   useEffect(() => {
     const fetchNft = async () => {
       const nft = [
         {
           id: '0',
-          name: '',
+          name: 'NFT',
           image: '',
           description: '',
           attributes: [],
           owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 1200000000000000000n,
+          price: 0n,
         },
         {
           id: '0',
@@ -37,17 +39,24 @@ export const ForSale = () => {
           price: 1200000000000000000n,
         },
       ];
+
       if (nft.length !== 0) {
         setNft(nft);
       }
     };
     fetchNft();
   }, []);
-
   return (
     <div className="">
-      <div className="text-center pt-6">
-        <p className=" text-5xl text-purple-600 ">Listed NFTs</p>
+      <div className=" lg:h-80 h-36 items-center flex md:h-60 sm:h-40 ">
+        <img
+          src={banner}
+          alt="banner"
+          className="object-cover px-10 h-full w-full"
+        />
+      </div>
+      <div className="">
+        <p className="text-white my-8 ml-10 text-4xl  ">Your NFT Collections</p>
       </div>
       <div className="grid xl:grid-cols-4 lg:grid-cols-4  md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8">
         {nft ? (
@@ -74,7 +83,9 @@ export const ForSale = () => {
                           : element.name}
                       </p>
                       <p className="text-lg flex ">
-                        {formatEther(element.price)}
+                        {formatEther(element.price) > 0
+                          ? formatEther(element.price)
+                          : ''}
                         <img src={etherLogo} alt="" className="h-5 px-3 mt-1" />
                       </p>
                     </div>
@@ -84,7 +95,9 @@ export const ForSale = () => {
             );
           })
         ) : (
-          <p> {'No NFT Listed Yet..!!'} </p>
+          <div className=" bg-purple-600 text-white h-10 w-48 mb-4 ml-10 ">
+            <p className=" m-2 font-bold"> {'No NFT Listed Yet..!!'} </p>
+          </div>
         )}
       </div>
     </div>

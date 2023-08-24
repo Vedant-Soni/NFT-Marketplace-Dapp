@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../images/logo-2.png';
+import logo from '../images/logo.png';
 import { ethers } from 'ethers';
 
 export const Header = () => {
@@ -28,16 +28,20 @@ export const Header = () => {
   const walletConnect = async () => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
+      if (network.chainId !== 80001) {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x13881' }], // Mumbai 80001
+        });
+      }
       await provider.send('eth_requestAccounts', []);
       signer = provider.getSigner();
       let ad = await signer.getAddress();
       ad = ad.slice(0, 6) + '...' + ad.slice(-4);
       setAddress(ad);
       setConnection(true);
-      const copyToClipboard = async () => {
-        navigator.clipboard.writeText(await signer.getAddress());
-      };
-      copyToClipboard();
+
       localStorage.setItem('Account', await signer.getAddress());
       localStorage.setItem('Connection', true);
     } catch (err) {
@@ -61,25 +65,22 @@ export const Header = () => {
   return (
     <div className=" h-max flex">
       <Link to={'/home'}>
-        <img
-          src={logo}
-          alt="logo"
-          className=" h-20 ml-10 mt-2 px-6 py-3 rounded-3xl "
-        />
+        <img src={logo} alt="logo" className=" h-36 ml-10 mt-2 px-6 py-3 " />
       </Link>
-      <ul className="flex m-auto mr-2 text-xl pl-2">
+      <ul className="flex m-auto mr-2 text-xl pl-2 text-white">
         <Link to={'/home'}>
           <li className="mx-3">Home</li>
         </Link>
-        <Link to={'/claim'}>
+        <Link to={'/create'}>
           <li className="mx-3">Create</li>
         </Link>
-        <li className="mx-3">Profile</li>
+        <Link to={'/profile'}>
+          <li className="mx-3">Profile</li>
+        </Link>
       </ul>
       <button
         onClick={walletConnect}
-        className=" w-40 px-3 text-xl h-auto m-auto mx-10 overflow-hidden rounded-3xl bg-for-bg text-white"
-        title="Click to copy address"
+        className=" w-40 px-3 text-xl h-auto m-auto mx-10 overflow-hidden rounded-3xl bg-purple-600 text-white"
       >
         {isConnected
           ? address
