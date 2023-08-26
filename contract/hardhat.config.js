@@ -13,6 +13,8 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: `${process.env.ALCHEMY_API}`,
+    apiKey: {
+      polygonMumbai: process.env.POLYGONSCAN_API,
+    },
   },
 };
