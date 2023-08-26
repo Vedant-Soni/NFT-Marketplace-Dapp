@@ -6,39 +6,19 @@ export const ForSale = () => {
   const [nft, setNft] = useState();
   useEffect(() => {
     const fetchNft = async () => {
-      const nft = [
-        {
-          id: '0',
-          name: '',
-          image: '',
-          description: '',
-          attributes: [],
-          owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 1200000000000000000n,
-        },
-        {
-          id: '0',
-          name: 'NFT 1',
-          image:
-            'https://marketplace.canva.com/EAE-xnqWvJk/1/0/1600w/canva-retro-smoke-and-round-light-desktop-wallpapers-JLofAI27pCg.jpg',
-          description: 'Hello NFT 1',
-          attributes: [],
-          owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 1200000000000000000n,
-        },
-        {
-          id: '0',
-          name: 'NFT 1',
-          image:
-            'https://coffee-different-cat-534.mypinata.cloud/ipfs/QmXW1GNacvagczg9C6zmSAWme7xZxGRL8MrEj1oWRMRA2c',
-          description: 'Hello NFT 1',
-          attributes: [],
-          owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 1200000000000000000n,
-        },
-      ];
-      if (nft.length !== 0) {
-        setNft(nft);
+      try {
+        const response = await fetch('http://localhost:5001/getListedNft', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const getnftData = await response.json();
+        if (getnftData.nftData.length !== 0) {
+          setNft(getnftData.nftData);
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     fetchNft();
@@ -74,7 +54,7 @@ export const ForSale = () => {
                           : element.name}
                       </p>
                       <p className="text-lg flex ">
-                        {formatEther(element.price)}
+                        {element.price.slice(0, 6)}
                         <img src={etherLogo} alt="" className="h-5 px-3 mt-1" />
                       </p>
                     </div>

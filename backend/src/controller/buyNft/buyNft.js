@@ -1,7 +1,7 @@
 const db = require('../../../models/index');
 
 const buyNft = async (req, res) => {
-  const { tokenId, owner } = req.body;
+  const { id, owner } = req.body;
   try {
     await db.nftdetail.update(
       {
@@ -11,7 +11,7 @@ const buyNft = async (req, res) => {
       },
       {
         where: {
-          tokenId,
+          id,
         },
       },
     );

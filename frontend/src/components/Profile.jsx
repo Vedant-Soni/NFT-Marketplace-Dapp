@@ -3,49 +3,42 @@ import banner from '../images/banner.jpeg';
 import etherLogo from '../images/Ether.png';
 import { NavLink } from 'react-router-dom';
 import { formatEther } from 'ethers/lib/utils';
+import walletAddress from '../Contract';
 
 export const Profile = () => {
   const [nft, setNft] = useState();
+  const [address, setAddress] = useState();
+  window.ethereum.on('chainChanged', () => {
+    window.location.reload();
+  });
   useEffect(() => {
     const fetchNft = async () => {
-      const nft = [
-        {
-          id: '0',
-          name: 'NFT',
-          image: '',
-          description: '',
-          attributes: [],
-          owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 0n,
-        },
-        {
-          id: '0',
-          name: 'NFT 1',
-          image:
-            'https://marketplace.canva.com/EAE-xnqWvJk/1/0/1600w/canva-retro-smoke-and-round-light-desktop-wallpapers-JLofAI27pCg.jpg',
-          description: 'Hello NFT 1',
-          attributes: [],
-          owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 1200000000000000000n,
-        },
-        {
-          id: '0',
-          name: 'NFT 1',
-          image:
-            'https://coffee-different-cat-534.mypinata.cloud/ipfs/QmXW1GNacvagczg9C6zmSAWme7xZxGRL8MrEj1oWRMRA2c',
-          description: 'Hello NFT 1',
-          attributes: [],
-          owner: '0x5B38Da6a701c568545dCfcB03FcB875f56beddC4',
-          price: 1200000000000000000n,
-        },
-      ];
+      try {
+        const response = await fetch(
+          `http://localhost:5001/ownedNft/${address}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        const getnftData = await response.json();
 
-      if (nft.length !== 0) {
-        setNft(nft);
+        if (getnftData) {
+          setNft(getnftData.nftData);
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     fetchNft();
-  }, []);
+    const wallet = async () => {
+      const { address } = await walletAddress();
+      setAddress(address);
+    };
+    wallet();
+  }, [address]);
   return (
     <div className="">
       <div className=" lg:h-80 h-36 items-center flex md:h-60 sm:h-40 ">
@@ -83,9 +76,7 @@ export const Profile = () => {
                           : element.name}
                       </p>
                       <p className="text-lg flex ">
-                        {formatEther(element.price) > 0
-                          ? formatEther(element.price)
-                          : ''}
+                        {element.price > 0 ? element.price.slice(0, 6) : ''}
                         <img src={etherLogo} alt="" className="h-5 px-3 mt-1" />
                       </p>
                     </div>

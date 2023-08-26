@@ -7,7 +7,7 @@ import walletAddress from '../Contract';
 import { useWalletConnection } from '../useWalletConnetion';
 
 export const CreateNft = () => {
-  const { isConnected, checkNetworkAndConnect } = useWalletConnection();
+  const { checkNetworkAndConnect } = useWalletConnection();
   const [traitsDropdown, setTraitsDropdown] = useState(false);
   const [address, setAddress] = useState();
 
@@ -94,12 +94,36 @@ export const CreateNft = () => {
         const imageIpfsHash = await uploadToIpfs(selectedFile);
         const imageUrl = `https://coffee-different-cat-534.mypinata.cloud/ipfs/${imageIpfsHash}`;
         const generatedMetadata = await uploadMeta(imageUrl);
+
         checkNetworkAndConnect();
         const { contract } = await walletAddress();
         const mintNFT = await contract.safeMint(
           `https://coffee-different-cat-534.mypinata.cloud/ipfs/${generatedMetadata}`,
         );
         await mintNFT.wait();
+        const params = {
+          name,
+          image: imageUrl,
+          description,
+          attributes: traits,
+          metadata: generatedMetadata,
+          owner: address,
+        };
+        try {
+          const response = await fetch(`http://localhost:5001/createNft`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(params),
+          });
+          await response.json();
+          alert('NFT Created Successfully');
+          window.location.reload();
+        } catch (error) {
+          console.log(error);
+        }
+
         handleClose();
       } else {
         alert('NFT Image and Name is necessary');
@@ -273,7 +297,7 @@ export const CreateNft = () => {
               <div className="bg-transparent border border-gray-400 rounded-xl my-2">
                 <div className="my-2 flex w-full gap-4 text-center p-6 ">
                   <div>
-                    <p>Type</p>
+                    <p className="text-white">Type</p>
                     <input
                       type="text"
                       placeholder="Type"
@@ -284,7 +308,7 @@ export const CreateNft = () => {
                     />
                   </div>
                   <div>
-                    <p>Name</p>
+                    <p className="text-white">Name</p>
                     <input
                       type="text"
                       placeholder="Name"
