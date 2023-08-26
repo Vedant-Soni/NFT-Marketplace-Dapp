@@ -1,5 +1,5 @@
 import React from 'react';
-import welcomeImage from '../images/welcomeImage.avif';
+import welcomeImage from '../images/homeNft.png';
 
 export const Welcome = () => {
   return (

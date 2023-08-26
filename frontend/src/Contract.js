@@ -8,7 +8,7 @@ const walletAddress = async () => {
   const address = await signer.getAddress();
 
   const contract = new ethers.Contract(
-    '0xcd29cb5508d1150b2683366705759A7283bE595b',
+    '0xed57a0AC449C040C43DA24455fA9d4CA92569000',
     ABI,
     signer,
   );
