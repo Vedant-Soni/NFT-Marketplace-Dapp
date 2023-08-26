@@ -5,17 +5,43 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
-contract Vector is ERC721, ERC721Enumerable, ERC721URIStorage {
+contract NftMarketplace is
+    ERC721,
+    ERC721Enumerable,
+    ERC721URIStorage,
+    ERC2771Context
+{
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("Vector", "VXS") {}
+    constructor(
+        address trustedForwarderAddress
+    ) ERC721("Vector", "VXS") ERC2771Context(trustedForwarderAddress) {}
 
     struct NFT {
         address owner;
         uint256 price;
+    }
+
+    function _msgData()
+        internal
+        view
+        override(ERC2771Context, Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(ERC2771Context, Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
     }
 
     mapping(uint256 => NFT) public nfts;
