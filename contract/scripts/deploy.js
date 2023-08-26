@@ -8,11 +8,13 @@ const hre = require('hardhat');
 
 async function main() {
   await hre.run('compile');
-  const vector = await hre.ethers.deployContract('Vector');
+  const NftMarketplace = await hre.ethers.deployContract('NftMarketplace', [
+    '0x69015912AA33720b842dCD6aC059Ed623F28d9f7',
+  ]);
 
-  await vector.waitForDeployment();
+  await NftMarketplace.waitForDeployment();
 
-  console.log('Contract deployed successfully at ', vector.target);
+  console.log('Contract deployed successfully at ', NftMarketplace.target);
 }
 
 main().catch((error) => {
