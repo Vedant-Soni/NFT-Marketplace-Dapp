@@ -96,11 +96,25 @@ export const CreateNft = () => {
         const generatedMetadata = await uploadMeta(imageUrl);
 
         checkNetworkAndConnect();
-        const { contract } = await walletAddress();
-        const mintNFT = await contract.safeMint(
+        const { contract, biconomy } = await walletAddress();
+        const mintNFT = await contract.populateTransaction.safeMint(
           `https://coffee-different-cat-534.mypinata.cloud/ipfs/${generatedMetadata}`,
+          {
+            gasLimit: 1000000,
+            gasPrice: 1000000000,
+          },
         );
-        await mintNFT.wait();
+        const txDetails = {
+          from: contract.address,
+          to: contract.address,
+          data: mintNFT.data,
+          signatureType: 'SIGN TO EXECUTE TRANSACTION FOR CREATING NFT',
+        };
+        const provider = await biconomy.provider;
+        const completeTx = await provider.send('eth_sendTransaction', [
+          txDetails,
+        ]);
+        await completeTx.wait();
         const params = {
           name,
           image: imageUrl,
